@@ -161,7 +161,7 @@ class ClassificationModelDocumentFingerprint(ClassificationNetworkAPI):
       document = " ".join(self.currentDocument)
       sensor = self.sensorRegion.getSelf()
       sensor.addDataToQueue(token=document, categoryList=[None],
-                            sequenceId=-1, reset=resetSequence)
+                            sequenceId=-1, reset=reset)
       self.network.run(1)
 
       if self.verbosity >= 2:
