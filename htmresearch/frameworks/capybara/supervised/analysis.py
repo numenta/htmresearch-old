@@ -18,22 +18,22 @@
 #
 # http://numenta.org/licenses/
 # ----------------------------------------------------------------------
+import datetime
 import os
 import time
-import datetime
 
+from htmresearch.frameworks.capybara.distance import \
+  distance_matrix, sequence_distance, reshaped_sequence_distance
+from htmresearch.frameworks.capybara.embedding import \
+  convert_to_embeddings, reshape_embeddings
+from htmresearch.frameworks.capybara.proj import project_vectors
 from htmresearch.frameworks.capybara.sdr import load_sdrs
-from htmresearch.frameworks.capybara.supervised import train_and_test
-from htmresearch.frameworks.capybara.proj import (
-  project_vectors, project_matrix)
-from htmresearch.frameworks.capybara.utils import (
-  get_logger, check_shape, indent, hours_minutes_seconds)
-from htmresearch.frameworks.capybara.viz import (
-  plot_matrix, plot_projections, make_plot_title, make_subplots)
-from htmresearch.frameworks.capybara.embedding import (
-  convert_to_embeddings, reshape_embeddings)
-from htmresearch.frameworks.capybara.distance import (
-  distance_matrix, sequence_distance, reshaped_sequence_distance)
+from htmresearch.frameworks.capybara.supervised.classification import \
+  train_and_test
+from htmresearch.frameworks.capybara.supervised.plot import \
+  plot_matrix, plot_projections, make_plot_title, make_subplots
+from htmresearch.frameworks.capybara.util import \
+  get_logger, check_shape, indent, hours_minutes_seconds
 
 PHASES = ['train', 'test']
 CELL_TYPES = ['sp', 'tm']
@@ -82,8 +82,6 @@ def analyze_sdr_sequences(sdr_sequences_train, sdr_sequences_test, data_id,
     dist_mats['sp'][phase], dist_mats['tm'][phase], _ = distance_matrix(
       embeddings['sp'][phase], embeddings['tm'][phase], distance)
 
-
-
   # Step 2: Flatten the sequence embeddings to be able to classify each
   # sequence with a supervised classifier. The classifier uses the same
   # sequence distance as the distance matrix.
@@ -128,7 +126,8 @@ def analyze_sdr_sequences(sdr_sequences_train, sdr_sequences_test, data_id,
       plot_matrix(dist_mats[cell_type][phase], title, fig, ax[phase_idx][0])
 
       if tsne:
-        embeddings_proj = project_vectors(X[cell_type][phase], reshaped_distance)
+        embeddings_proj = project_vectors(X[cell_type][phase],
+                                          reshaped_distance)
         # Re-use the distance matrix to compute the 2D projections. It's faster.
         # embeddings_proj = project_matrix(dist_mats[cell_type][phase])
 
@@ -153,7 +152,7 @@ def run_analysis(trace_dir, data_ids, chunks, n_neighbors, tsne, aggregations,
     LOGGER.info(indent(1) + 'load: ' + data_id)
     sdr_sequences = {}
     for phase in PHASES:
-      f_path = os.path.join(trace_dir, 'trace_%s_%s' % (data_id, phase))
+      f_path = os.path.join(trace_dir, 'trace_%s_%s' % (data_id, phase.upper()))
       sdr_sequences[phase] = load_sdrs(f_path, SP_OUT_WIDTH, TM_OUT_WIDTH)
       LOGGER.info(indent(2) + 'loaded: ' + f_path)
     LOGGER.info(indent(1) + 'analyze: ' + data_id)

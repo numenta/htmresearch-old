@@ -22,6 +22,8 @@
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
+
+
 def train_and_test(X_train, y_train, X_test, y_test, distance, n_neighbors):
   knn = KNeighborsClassifier(n_neighbors=n_neighbors,
                              algorithm='auto', metric=distance)
