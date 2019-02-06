@@ -1,0 +1,7 @@
+prettytable
+simplejson
+htmresearch
+nupic
+matplotlib
+sklearn
+PyYaml
